@@ -1,7 +1,7 @@
 [package]
 name = "dalbit"
 version = "0.1.1"
-authors = ["jiwonz"]
+authors = ["jiwonz <me@jiwonz.kr>"]
 edition = "2021"
 description = "A Luau-to-Lua transpiler"
 repository = "https://github.com/CavefulGames/dal"
