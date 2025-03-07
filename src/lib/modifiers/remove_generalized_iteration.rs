@@ -34,8 +34,8 @@ fn get_type_condition(arg: Expression, type_name: &str) -> Box<BinaryExpression>
 
 impl Processor {
     fn process_into_do(&self, block: &mut Block) -> Option<(usize, Statement)> {
-        let block_stmts = block.mutate_statements();
-        for (i, stmt) in block_stmts.iter_mut().enumerate() {
+        let mut result: Option<(usize, Statement)> = None;
+        for (i, stmt) in block.iter_mut_statements().enumerate() {
             if let Statement::GenericFor(generic_for) = stmt {
                 let exps = generic_for.mutate_expressions();
                 if exps.len() == 1 {
@@ -143,13 +143,21 @@ impl Processor {
                     stmts.push(if_table_stmt.into());
                     stmts.push(generic_for.clone().into());
 
-                    block_stmts.remove(i);
 
-                    return Some((i, DoStatement::new(Block::new(stmts, None)).into()));
+                    result = Some((i, DoStatement::new(Block::new(stmts, None)).into()));
+                    break;
+
+                    // return Some((i, DoStatement::new(Block::new(stmts, None)).into()));
                 }
             }
         }
-        None
+
+        if let Some(result) = result {
+            block.remove_statement(result.0);
+            Some(result)
+        } else {
+            None
+        }
     }
 }
 
