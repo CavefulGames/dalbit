@@ -22,6 +22,7 @@ Dalbit(달빛) is a Luau-to-Lua transpiler, designed specifically for `Lua 5.3`.
 ### Using [pesde](https://pesde.dev/packages/caveful_games/dalbit)
 ```sh
 pesde add caveful_games/dalbit --dev --target lune
+pesde install
 ```
 
 ### [From Releases](https://github.com/CavefulGames/dalbit/releases)
