@@ -49,3 +49,5 @@ indexmap = { version = "2.7.0", features = ["serde"] }
 url = { version = "2.5.4", features = ["serde"] }
 fs-err = "3.0.0"
 darklua = "0.16.0"
+async-walkdir = "2.1.0"
+futures-lite = "2.6.0"

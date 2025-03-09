@@ -1,6 +1,8 @@
 use std::{path::PathBuf, str::FromStr};
 
 use anyhow::{anyhow, Result};
+use async_walkdir::WalkDir;
+use futures_lite::stream::StreamExt;
 use darklua_core::{
     rules::{self, bundle::BundleRequireMode},
     BundleConfiguration, Configuration, GeneratorParameters, Options, Resources,
@@ -104,11 +106,12 @@ async fn private_process(
             .fold(config, |config, rule| config.with_rule(rule))
     });
     options = options.with_output(&output);
-    let result = darklua_core::process(&resources, options);
+    let mut result = darklua_core::process(&resources, options).map_err(|e| anyhow!(e))?;
 
     let success_count = result.success_count();
-    if result.has_errored() {
-        let error_count = result.error_count();
+    let errors = result.collect_errors();
+    let error_count = errors.len();
+    if error_count > 0 {
         eprintln!(
             "{}{} error{} happened:",
             if success_count > 0 { "but " } else { "" },
@@ -116,24 +119,42 @@ async fn private_process(
             if error_count > 1 { "s" } else { "" }
         );
 
-        result.errors().for_each(|error| eprintln!("-> {}", error));
+        errors.into_iter().for_each(|error| eprintln!("-> {}", error));
 
         return Err(anyhow!("darklua process was not successful"));
     }
 
-    let mut created_files: Vec<PathBuf> = result.into_created_files().collect();
+    // let mut created_files = utils::iter_files(input).await?.filter(|path| {
+    // 	matches!(
+    // 		path.extension().and_then(OsStr::to_str),
+    // 		Some("lua") | Some("luau")
+    // 	)
+    // }).collect::<Vec<_>>();
     let extension = manifest.file_extension();
+    let mut created_files = Vec::new();
     if fullmoon_visitors.is_empty() {
         if let Some(extension) = extension {
-            for path in &mut created_files {
+            let mut entries = WalkDir::new(input);
+            while let Some(entry) = entries.next().await {
+                let mut path = entry?.path();
+                if !result.contains(&path) {
+                    continue;
+                }
                 let old_path = path.clone();
                 path.set_extension(extension);
-                fs::rename(old_path, path).await?;
+                fs::rename(old_path, &path).await?;
+
+                created_files.push(path);
             }
         }
     } else {
-        for path in &mut created_files {
-            let mut ast = utils::parse_file(path, manifest.target_version()).await?;
+        let mut entries = WalkDir::new(input);
+        while let Some(entry) = entries.next().await {
+            let mut path = entry?.path();
+            if !result.contains(&path) {
+                continue;
+            }
+            let mut ast = utils::parse_file(&path, manifest.target_version()).await?;
 
             for visitor in &mut fullmoon_visitors {
                 ast = visitor.visit_ast_boxed(ast);
@@ -148,7 +169,9 @@ async fn private_process(
                 }
             }
 
-            fs::write(path, ast.to_string()).await?;
+            fs::write(&path, ast.to_string()).await?;
+
+            created_files.push(path);
         }
     }
 
