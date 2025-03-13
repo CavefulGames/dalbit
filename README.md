@@ -4,19 +4,6 @@
 
 Dalbit(달빛) is a Luau-to-Lua transpiler, designed specifically for `Lua 5.3`.
 
-## TO-DOs
-- [x] Implement CLI.
-- [x] Implement basic transpilation process using `darklua` and `full-moon`.
-- [x] Implement modifiers (such as converting number literals and generalized iterations)
-- [x] Implement basic lua polyfills.
-- [x] Add tests for polyfills.
-- [ ] Add tests for transpilation. (to ensure the same results in lua and luau)
-- [ ] Add tests for dalbit internally.
-- [x] Add logging for dalbit internally for debug.
-- [x] `convert_bit32` modifier now converts `bit32.btest`.
-- [x] Add comments for docs and code readability. (WIP)
-- [x] Optimize polyfill.
-
 ## Installation
 
 ### Using [pesde](https://pesde.dev/packages/caveful_games/dalbit)
@@ -107,11 +94,7 @@ end end
 
 ## Real-world use cases
 - [Kaledis](https://github.com/orpos/kaledis) - A tool that enables Luau to work with Love2D, simplifying project management, transpiling, and configuration.
-- Overblox - A tool that can transpile Roblox scripts to OVERDARE scripts using Dalbit.
-
-## Why `darklua-demo` over `darklua`?
-- `darklua-demo` is a temporary fork to work properly with dal.
-- `darklua-demo` will be replaced by official `darklua` once darklua released with important features to work properly with dal.
+- [overblox](https://github.com/pesde-pkg/tooling/tree/main/toolchainlib) - A tool that can transpile Roblox scripts to OVERDARE scripts using Dalbit.
 
 ## Contributions
 Any issues, advices, and PRs for contribution are welcome!
