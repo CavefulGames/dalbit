@@ -14,8 +14,6 @@ use init::InitCommand;
 use log::LevelFilter;
 use transpile::TranspileCommand;
 
-pub const DEFAULT_MANIFEST_PATH: &str = "dalbit.toml";
-
 #[derive(Debug, Clone, Subcommand)]
 pub enum CliSubcommand {
     Transpile(TranspileCommand),
