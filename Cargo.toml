@@ -43,9 +43,11 @@ path-slash = "0.2.1"
 durationfmt = "0.1.1"
 async-trait = "0.1.83"
 full_moon = { version = "1.1.2", features = ["luau", "lua53"] }
-darklua-demo = "3.2.1"
 env_logger = "0.11.5"
 anstyle = "1.0.10"
 indexmap = { version = "2.7.0", features = ["serde"] }
 url = { version = "2.5.4", features = ["serde"] }
 fs-err = "3.0.0"
+darklua = "0.16.0"
+async-walkdir = "2.1.0"
+futures-lite = "2.6.0"

@@ -15,7 +15,7 @@ pub enum ParseTarget {
 }
 
 pub(crate) async fn parse_file(path: &PathBuf, target_version: &TargetVersion) -> Result<Ast> {
-    let code = fs::read_to_string(&path).await?;
+    let code = fs::read_to_string(path).await?;
     let ast = full_moon::parse_fallible(code.as_str(), target_version.to_lua_version().clone())
         .into_result()
         .map_err(|errors| anyhow!("full_moon parsing error: {:?}", errors))?;

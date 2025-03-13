@@ -1,6 +1,8 @@
-use std::{path::PathBuf, str::FromStr};
+use std::{ffi::OsStr, path::PathBuf, str::FromStr};
 
 use anyhow::{anyhow, Result};
+use async_walkdir::WalkDir;
+use futures_lite::stream::StreamExt;
 use darklua_core::{
     rules::{self, bundle::BundleRequireMode},
     BundleConfiguration, Configuration, GeneratorParameters, Options, Resources,
@@ -104,11 +106,12 @@ async fn private_process(
             .fold(config, |config, rule| config.with_rule(rule))
     });
     options = options.with_output(&output);
-    let result = darklua_core::process(&resources, options);
+    let result = darklua_core::process(&resources, options).map_err(|e| anyhow!(e))?;
 
     let success_count = result.success_count();
-    if result.has_errored() {
-        let error_count = result.error_count();
+    let errors = result.collect_errors();
+    let error_count = errors.len();
+    if error_count > 0 {
         eprintln!(
             "{}{} error{} happened:",
             if success_count > 0 { "but " } else { "" },
@@ -116,12 +119,30 @@ async fn private_process(
             if error_count > 1 { "s" } else { "" }
         );
 
-        result.errors().for_each(|error| eprintln!("-> {}", error));
+        errors.into_iter().for_each(|error| eprintln!("-> {}", error));
 
         return Err(anyhow!("darklua process was not successful"));
     }
 
-    let mut created_files: Vec<PathBuf> = result.into_created_files().collect();
+    let mut created_files: Vec<PathBuf> = if output.is_dir() {
+        let mut created_files = Vec::new();
+        let mut entries = WalkDir::new(output);
+        while let Some(entry) = entries.next().await {
+            let path = entry?.path();
+            if !matches!(
+                path.extension().and_then(OsStr::to_str),
+                Some("lua") | Some("luau")
+            ) {
+                continue;
+            }
+            created_files.push(path);
+        }
+        created_files
+    } else {
+        vec![output.clone()]
+    };
+    println!("created_files: {:?}", created_files);
+
     let extension = manifest.file_extension();
     if fullmoon_visitors.is_empty() {
         if let Some(extension) = extension {
