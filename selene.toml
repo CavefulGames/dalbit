@@ -1,0 +1,4 @@
+std = "luau"
+
+[config.global_usage]
+ignore_pattern = "PESDE_ROOT"

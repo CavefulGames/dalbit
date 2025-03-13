@@ -1,0 +1,26 @@
+name = "caveful_games/dalbit"
+version = "0.1.1"
+description = "A Luau-to-Lua transpiler"
+authors = ["jiwonz <me@jiwonz.kr>"]
+repository = "https://github.com/CavefulGames/dalbit"
+license = "MIT"
+includes = ["README.md", "LICENSE.md", "bin.luau", "pesde.toml"]
+
+[target]
+environment = "lune"
+bin = "bin.luau"
+
+[indices]
+default = "https://github.com/pesde-pkg/index"
+
+[engines]
+lune = "^0.8.9"
+pesde = "^0.6.0"
+
+[dependencies]
+result = { name = "lukadev_0/result", version = "^1.2.0" }
+option = { name = "lukadev_0/option", version = "^1.2.0" }
+toolchainlib = { name = "pesde/toolchainlib", version = "^0.1.12" }
+
+[dev_dependencies]
+luau_check = { name = "jiwonz/luau_check", version = "^0.3.11" }
