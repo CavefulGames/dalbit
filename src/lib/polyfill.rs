@@ -14,7 +14,6 @@ use std::str::FromStr;
 use tokio::fs;
 use url::Url;
 
-use crate::manifest::WritableManifest;
 use crate::{utils, TargetVersion};
 
 pub const DEFAULT_REPO_URL: &str = "https://github.com/CavefulGames/dalbit-polyfill";
@@ -111,7 +110,22 @@ pub struct PolyfillManifest {
     lua_version: TargetVersion,
 }
 
-impl WritableManifest for PolyfillManifest {}
+impl PolyfillManifest {
+    /// Load polyfill manifest from file.
+    pub async fn from_file(path: impl Into<PathBuf>) -> Result<Self> {
+        let path = path.into();
+        let manifest = fs::read_to_string(&path).await?;
+        let manifest: Self = toml::from_str(&manifest)
+            .with_context(|| format!("Could not parse polyfill manifest file: {:?}", path))?;
+        Ok(manifest)
+    }
+
+    /// Write polyfill manifest to file.
+    pub async fn write(&self, path: impl Into<PathBuf>) -> Result<()> {
+        fs::write(path.into(), toml::to_string(self)?).await?;
+        Ok(())
+    }
+}
 
 /// Polyfill's globals.
 #[derive(Debug)]

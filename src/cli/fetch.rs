@@ -1,18 +1,23 @@
-use std::process::ExitCode;
+use std::{path::Path, process::ExitCode};
 
 use anyhow::Result;
 use clap::Parser;
-use dalbit_core::manifest::{Manifest, WritableManifest};
+use dalbit_core::manifest::{Manifest};
 
-use super::DEFAULT_MANIFEST_PATH;
+use dalbit_core::manifest::DEFAULT_MANIFEST_PATH;
 
 /// Fetch dalbit polyfills
 #[derive(Debug, Clone, Parser)]
-pub struct FetchCommand {}
+pub struct FetchCommand {
+	/// Path to the manifest file
+    #[arg(long, default_value = DEFAULT_MANIFEST_PATH)]
+    config: String,
+}
 
 impl FetchCommand {
     pub async fn run(self) -> Result<ExitCode> {
-        let manifest = Manifest::from_file(DEFAULT_MANIFEST_PATH).await?;
+		let config_path = Path::new(&self.config);
+        let manifest = Manifest::from_file(config_path).await?;
         let polyfill_cache = manifest.polyfill().cache().await?;
         polyfill_cache.fetch()?;
 
