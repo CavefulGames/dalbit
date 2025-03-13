@@ -1,4 +1,7 @@
-use std::{path::{Path, PathBuf}, process::ExitCode};
+use std::{
+    path::{Path, PathBuf},
+    process::ExitCode,
+};
 
 use anyhow::{anyhow, Result};
 use clap::Parser;
@@ -16,7 +19,8 @@ pub struct InitCommand {
 impl InitCommand {
     pub async fn run(self) -> Result<ExitCode> {
         let mut buffer = PathBuf::new();
-        let config_path = self.path
+        let config_path = self
+            .path
             .as_deref()
             .map(|p| {
                 buffer = Path::new(p).join("dalbit.toml");

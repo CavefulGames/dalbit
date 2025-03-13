@@ -2,11 +2,11 @@ use std::{ffi::OsStr, path::PathBuf, str::FromStr};
 
 use anyhow::{anyhow, Result};
 use async_walkdir::WalkDir;
-use futures_lite::stream::StreamExt;
 use darklua_core::{
     rules::{self, bundle::BundleRequireMode},
     BundleConfiguration, Configuration, GeneratorParameters, Options, Resources,
 };
+use futures_lite::stream::StreamExt;
 use indexmap::IndexMap;
 use tokio::fs;
 
@@ -119,7 +119,9 @@ async fn private_process(
             if error_count > 1 { "s" } else { "" }
         );
 
-        errors.into_iter().for_each(|error| eprintln!("-> {}", error));
+        errors
+            .into_iter()
+            .for_each(|error| eprintln!("-> {}", error));
 
         return Err(anyhow!("darklua process was not successful"));
     }

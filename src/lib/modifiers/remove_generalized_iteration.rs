@@ -143,7 +143,6 @@ impl Processor {
                     stmts.push(if_table_stmt.into());
                     stmts.push(generic_for.clone().into());
 
-
                     result = Some((i, DoStatement::new(Block::new(stmts, None)).into()));
                     break;
 
