@@ -4,7 +4,7 @@ description = "A Luau-to-Lua transpiler"
 authors = ["jiwonz <me@jiwonz.kr>"]
 repository = "https://github.com/CavefulGames/dalbit"
 license = "MIT"
-includes = ["README.md", "LICENSE.md", "bin.luau", "pesde.toml"]
+includes = ["README.md", "LICENSE", "bin.luau", "pesde.toml"]
 
 [target]
 environment = "lune"
