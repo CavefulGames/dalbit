@@ -25,24 +25,25 @@ cargo install dalbit --locked
 ```
 
 ## Usage
+You can print more options and informations by running `dalbit help [command]`
 
 ### `init`
 Initializes dalbit manifest file in the current path.
 ```sh
-dalbit init
+dalbit init [path]
 ```
 
 ### `fetch`
 Fetches and updates lua polyfills.
 * This polyfill can be found [here](https://github.com/CavefulGames/dalbit-polyfill).
 ```sh
-dalbit fetch
+dalbit fetch --config <config-path>
 ```
 
 ### `transpile`
 Transpiles luau code to lua code.
 ```sh
-dalbit transpile
+dalbit transpile --config <config-path>
 ```
 
 ### `clean`
@@ -90,7 +91,7 @@ end end
 ```
 
 ## How does it work?
-- Dalbit utilizes darklua and full-moon to transform lua scripts.
+- Dalbit utilizes darklua and full-moon to transform lua scripts and injects polyfills.
 
 ## Real-world use cases
 - [Kaledis](https://github.com/orpos/kaledis) - A tool that enables Luau to work with Love2D, simplifying project management, transpiling, and configuration.
