@@ -15,7 +15,7 @@ default = "https://github.com/pesde-pkg/index"
 
 [engines]
 lune = "^0.8.9"
-pesde = "^0.6.0"
+pesde = "^0.7.0-rc.1"
 
 [dependencies]
 result = { name = "lukadev_0/result", version = "^1.2.0" }
