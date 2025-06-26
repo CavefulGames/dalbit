@@ -1,5 +1,5 @@
 name = "caveful_games/dalbit"
-version = "0.2.0"
+version = "0.2.1"
 description = "A Luau-to-Lua transpiler"
 authors = ["jiwonz <me@jiwonz.kr>"]
 repository = "https://github.com/CavefulGames/dalbit"
@@ -21,6 +21,3 @@ pesde = "^0.6.0"
 result = { name = "lukadev_0/result", version = "^1.2.0" }
 option = { name = "lukadev_0/option", version = "^1.2.0" }
 toolchainlib = { name = "pesde/toolchainlib", version = "^0.1.12" }
-
-[dev_dependencies]
-luau_check = { name = "jiwonz/luau_check", version = "^0.3.11" }
