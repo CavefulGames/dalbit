@@ -5,7 +5,6 @@ use full_moon::ast::punctuated::Pair;
 use full_moon::ast::Do;
 use full_moon::node::Node;
 use full_moon::tokenizer::{Symbol, Token, TokenType};
-use full_moon::ShortString;
 use full_moon::{
     ast::{
         punctuated::Punctuated, BinOp, Call, Expression, FunctionArgs, FunctionCall, Index, Stmt,
@@ -159,33 +158,42 @@ impl VisitorMut for ConvertBit32 {
         match &stmt {
             Stmt::FunctionCall(func_call) => {
                 if let Some(_) = self.convert(func_call) {
-                    return Stmt::Do(
-                        Do::new()
-                            .with_do_token(TokenReference::new(
-                                func_call
-                                    .surrounding_trivia()
-                                    .0
-                                    .into_iter()
-                                    .cloned()
-                                    .collect(),
-                                Token::new(TokenType::Symbol { symbol: Symbol::Do }),
-                                vec![Token::new(TokenType::Whitespace {
-                                    characters: ShortString::new(" "),
-                                })],
-                            ))
-                            .with_end_token(TokenReference::new(
-                                Vec::new(),
-                                Token::new(TokenType::Symbol {
-                                    symbol: Symbol::End,
-                                }),
-                                func_call
-                                    .surrounding_trivia()
-                                    .1
-                                    .into_iter()
-                                    .cloned()
-                                    .collect(),
-                            )),
-                    );
+                    if let Suffix::Call(Call::AnonymousCall(FunctionArgs::Parentheses {
+                        parentheses,
+                        arguments: _,
+                    })) = func_call.suffixes().last().unwrap()
+                    {
+                        return Stmt::Do(
+                            Do::new()
+                                .with_do_token(TokenReference::new(
+                                    func_call
+                                        .surrounding_trivia()
+                                        .0
+                                        .into_iter()
+                                        .cloned()
+                                        .collect(),
+                                    Token::new(TokenType::Symbol { symbol: Symbol::Do }),
+                                    vec![Token::new(TokenType::Whitespace {
+                                        characters: " ".into(),
+                                    })],
+                                ))
+                                .with_end_token(TokenReference::new(
+                                    Vec::new(),
+                                    Token::new(TokenType::Symbol {
+                                        symbol: Symbol::End,
+                                    }),
+                                    parentheses
+                                        .tokens()
+                                        .1
+                                        .trailing_trivia()
+                                        .cloned()
+                                        .chain(std::iter::once(Token::new(TokenType::Whitespace {
+                                            characters: " ".into(),
+                                        })))
+                                        .collect(),
+                                )),
+                        );
+                    }
                 }
             }
             Stmt::Assignment(assign) => {
@@ -203,20 +211,20 @@ impl VisitorMut for ConvertBit32 {
                         Do::new()
                             .with_do_token(TokenReference::new(
                                 vec![Token::new(TokenType::Whitespace {
-                                    characters: ShortString::new(" "),
+                                    characters: " ".into(),
                                 })],
                                 Token::new(TokenType::Symbol { symbol: Symbol::Do }),
                                 do_trailing_trivia,
                             ))
                             .with_end_token(TokenReference::new(
                                 vec![Token::new(TokenType::Whitespace {
-                                    characters: ShortString::new(" "),
+                                    characters: " ".into(),
                                 })],
                                 Token::new(TokenType::Symbol {
                                     symbol: Symbol::End,
                                 }),
                                 vec![Token::new(TokenType::Whitespace {
-                                    characters: ShortString::new(" "),
+                                    characters: " ".into(),
                                 })],
                             )),
                     );
@@ -241,7 +249,7 @@ impl VisitorMut for ConvertBit32 {
                         Do::new()
                             .with_do_token(TokenReference::new(
                                 vec![Token::new(TokenType::Whitespace {
-                                    characters: ShortString::new(" "),
+                                    characters: " ".into(),
                                 })],
                                 Token::new(TokenType::Symbol { symbol: Symbol::Do }),
                                 do_trailing_trivia,
@@ -252,7 +260,7 @@ impl VisitorMut for ConvertBit32 {
                                     symbol: Symbol::End,
                                 }),
                                 vec![Token::new(TokenType::Whitespace {
-                                    characters: ShortString::new(" "),
+                                    characters: " ".into(),
                                 })],
                             )),
                     );
