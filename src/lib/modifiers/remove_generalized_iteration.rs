@@ -144,8 +144,6 @@ impl Processor {
                     stmts.push(generic_for.clone().into());
 
                     result = Some((i, DoStatement::new(Block::new(stmts, None)).into()));
-                    break;
-
                     // return Some((i, DoStatement::new(Block::new(stmts, None)).into()));
                 }
             }
