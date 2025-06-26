@@ -50,4 +50,4 @@ fs-err = "3.0.0"
 darklua = "0.16.0"
 async-walkdir = "2.1.0"
 futures-lite = "2.6.0"
-git2 = "0.20.2"
+git2 = { version = "0.20.2", features = ["vendored-openssl"] }
