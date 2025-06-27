@@ -18,7 +18,11 @@ impl FetchCommand {
     pub async fn run(self) -> Result<ExitCode> {
         let config_path = Path::new(&self.config);
         let manifest = Manifest::from_file(config_path).await?;
-        let polyfill_cache = manifest.polyfill().cache().await?;
+        let Some(polyfill) = manifest.polyfill() else {
+            println!("No polyfill configured in the manifest.");
+            return Ok(ExitCode::SUCCESS);
+        };
+        let polyfill_cache = polyfill.cache().await?;
         polyfill_cache.fetch()?;
 
         // TO-DO: Is fetched polyfill already latest version?

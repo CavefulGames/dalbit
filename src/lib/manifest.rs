@@ -17,7 +17,7 @@ pub struct Manifest {
     target_version: TargetVersion,
     pub minify: bool,
     modifiers: IndexMap<String, bool>,
-    polyfill: Polyfill,
+    polyfill: Option<Polyfill>,
     #[serde(skip)]
     path: PathBuf,
 }
@@ -31,7 +31,7 @@ impl Default for Manifest {
             target_version: TargetVersion::Lua53,
             minify: true,
             modifiers: IndexMap::new(),
-            polyfill: Polyfill::default(),
+            polyfill: Some(Polyfill::default()),
             path: Path::new(DEFAULT_MANIFEST_PATH).to_owned(),
         }
     }
@@ -84,7 +84,7 @@ impl Manifest {
     }
 
     #[inline]
-    pub fn polyfill(&self) -> &Polyfill {
+    pub fn polyfill(&self) -> &Option<Polyfill> {
         &self.polyfill
     }
 }
