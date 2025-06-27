@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.2.2
+- Make polyfill optional ([#23](https://github.com/CavefulGames/dalbit/pull/23))
+
 ## 0.2.1
 - Fix remove_generated_iteration modifier process terminating issue after processing once ([#16](https://github.com/CavefulGames/dalbit/pull/16))
 - Fix token bug with convert_bit32 ([#17](https://github.com/CavefulGames/dalbit/pull/17))
