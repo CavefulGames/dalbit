@@ -187,7 +187,9 @@ pub async fn process(manifest: Manifest) -> Result<()> {
         false,
     )
     .await?;
-    let polyfill = manifest.polyfill();
+    let Some(polyfill) = manifest.polyfill() else {
+        return Ok(());
+    };
     let polyfill_cache = polyfill.cache().await?;
     let polyfill_config = polyfill_cache.config();
 
