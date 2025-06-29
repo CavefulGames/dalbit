@@ -16,7 +16,6 @@ struct Processor {
     iterator_identifier: String,
     invariant_identifier: String,
     control_identifier: String,
-    skip_block_once: bool,
 }
 
 fn get_type_condition(arg: Expression, type_name: &str) -> Box<BinaryExpression> {
@@ -32,9 +31,10 @@ fn get_type_condition(arg: Expression, type_name: &str) -> Box<BinaryExpression>
     ))
 }
 
-impl Processor {
-    fn process_into_do(&self, block: &mut Block) -> Option<(usize, Statement)> {
-        let mut result: Option<(usize, Statement)> = None;
+impl NodeProcessor for Processor {
+    fn process_block(&mut self, block: &mut Block) {
+        // Iterate through the statements in the block
+        let mut result: Vec<(usize, Statement)> = Vec::new();
         for (i, stmt) in block.iter_mut_statements().enumerate() {
             if let Statement::GenericFor(generic_for) = stmt {
                 let exps = generic_for.mutate_expressions();
@@ -105,12 +105,6 @@ impl Processor {
                         vec![mt_iter_call.into()],
                     );
 
-                    // let pairs_call = FunctionCall::new(
-                    //     Prefix::from_name("pairs"),
-                    //     TupleArguments::new(vec![iterator_identifier.clone().into()]).into(),
-                    //     None,
-                    // );
-
                     let assign_from_pairs = AssignStatement::new(
                         vec![
                             Variable::Identifier(iterator_identifier.clone()),
@@ -143,30 +137,13 @@ impl Processor {
                     stmts.push(if_table_stmt.into());
                     stmts.push(generic_for.clone().into());
 
-                    result = Some((i, DoStatement::new(Block::new(stmts, None)).into()));
-                    // return Some((i, DoStatement::new(Block::new(stmts, None)).into()));
+                    result.push((i, DoStatement::new(Block::new(stmts, None)).into()))
                 }
             }
         }
 
-        if let Some(result) = result {
-            block.remove_statement(result.0);
-            Some(result)
-        } else {
-            None
-        }
-    }
-}
-
-impl NodeProcessor for Processor {
-    fn process_block(&mut self, block: &mut Block) {
-        if self.skip_block_once {
-            self.skip_block_once = false;
-            return;
-        }
-        let do_stmt = self.process_into_do(block);
-        if let Some((i, stmt)) = do_stmt {
-            self.skip_block_once = true;
+        for (i, stmt) in result {
+            block.remove_statement(i);
             block.insert_statement(i, stmt);
         }
     }
@@ -200,7 +177,6 @@ impl Rule for RemoveGeneralizedIteration {
             iterator_identifier: var_builder.build("iter")?,
             invariant_identifier: var_builder.build("invar")?,
             control_identifier: var_builder.build("control")?,
-            skip_block_once: false,
         };
         DefaultVisitor::visit_block(block, &mut processor);
         Ok(())
