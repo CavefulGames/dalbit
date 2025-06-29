@@ -1,5 +1,5 @@
 name = "caveful_games/dalbit"
-version = "0.2.2"
+version = "0.2.3"
 description = "A Luau-to-Lua transpiler"
 authors = ["jiwonz <me@jiwonz.kr>"]
 repository = "https://github.com/CavefulGames/dalbit"
