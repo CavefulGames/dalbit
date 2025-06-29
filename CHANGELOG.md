@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.2.3
+- Fix remove_generalized_iteration not working properly ([#25](https://github.com/CavefulGames/dalbit/pull/25))
+
 ## 0.2.2
 - Make polyfill optional ([#23](https://github.com/CavefulGames/dalbit/pull/23))
 
